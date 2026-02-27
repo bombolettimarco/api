@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OpenStreetMap App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      text-align: center;
+    }
+
+    #map {
+      height: 70vh;
+      width: 100%;
+    }
+
+    .controls {
+      padding: 15px;
+      background: #f4f4f4;
+    }
+
+    input {
+      padding: 8px;
+      margin: 5px;
+      width: 120px;
+    }
+
+    button {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>OpenStreetMap - Posizione Attuale + Coordinate Personalizzate</h2>
+
+<div id="map"></div>
+
+<div class="controls">
+  <h3>Vai a coordinate personalizzate</h3>
+  <input type="text" id="lat" placeholder="Latitudine">
+  <input type="text" id="lng" placeholder="Longitudine">
+  <button onclick="goToLocation()">Vai</button>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  // Inizializzazione mappa (centrata su Roma di default)
+  const map = L.map('map').setView([41.9028, 12.4964], 13);
+
+  // Layer OpenStreetMap (tile server pubblico)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Marker iniziale
+  let marker = L.marker([41.9028, 12.4964]).addTo(map);
+
+  // Geolocalizzazione utente
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      map.setView([lat, lng], 13);
+      marker.setLatLng([lat, lng]);
+    });
+  } else {
+    alert("Geolocalizzazione non supportata dal browser.");
+  }
+
+  // Funzione per nuove coordinate
+  function goToLocation() {
+    const lat = parseFloat(document.getElementById("lat").value);
+    const lng = parseFloat(document.getElementById("lng").value);
+
+    if (!isNaN(lat) && !isNaN(lng)) {
+      map.setView([lat, lng], 13);
+      marker.setLatLng([lat, lng]);
+    } else {
+      alert("Inserisci coordinate valide.");
+    }
+  }
+</script>
+
+</body>
+</html>
